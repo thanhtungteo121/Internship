@@ -1,0 +1,9 @@
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "2100003660@nttu.edu.vn", // Email của bạn
+      pass: "pvzu lcmf bksg rczu", // Mật khẩu email
+    },
+  });
+  
+const clientID = '650634499897-grvbkvadkgnn8qeit6fied6mrcvtsq8i.apps.googleusercontent.com'

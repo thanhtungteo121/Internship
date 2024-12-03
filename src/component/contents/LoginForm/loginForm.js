@@ -23,7 +23,6 @@ const LoginForm = ({ onChangeImage }) => {
   const dispatch = useDispatch();
 
   const  user = useSelector((state) => state.user);
-  console.log("user slide", user);
   const mutation = useMutationHooks((data) => UserServices.loginUser(data));
 
   const { data , isError, isSuccess } = mutation;
@@ -88,6 +87,7 @@ const LoginForm = ({ onChangeImage }) => {
     dispatch(updateUser({...res?.data, access_token: token}))
    }
   const mutationGoogle = useMutationHooks((data) => UserServices.loginUserGoogle(data));
+
   console.log("mutationGoogle", mutationGoogle);
    useEffect(() => {
      if (mutationGoogle.isSuccess) {
@@ -139,7 +139,6 @@ const LoginForm = ({ onChangeImage }) => {
     }
   };
 
-
   return (
     <div>
       <div className="logo-login">
@@ -175,7 +174,7 @@ const LoginForm = ({ onChangeImage }) => {
             onChange={(e) => setEmailValue(e.target.value)}
           />
         </div>
-        {errors.email && <span className="error" style={{ color: "red", fontSize: "12px" }}>{errors.email}</span>}
+       {errors.email && <small className="error-message-l">{errors.email}</small>}
         <div
           className={`input-container-L-S ${
             passwordFocused || passwordValue ? "focused" : ""
@@ -194,11 +193,7 @@ const LoginForm = ({ onChangeImage }) => {
             onBlur={() => setPasswordFocused(false)}
             onChange={(e) => setPasswordValue(e.target.value)}
           />
-            {errors.password && (
-            <span style={{ color: "red", fontSize: "12px" }} className="error">
-              {errors.password}
-            </span>
-          )}
+             {errors.password && <small className="error-message-l">{errors.password}</small>}
         </div>
         <div className="remember-me">
           <input id="remember" type="checkbox" />
@@ -231,38 +226,7 @@ const LoginForm = ({ onChangeImage }) => {
             console.log('Login Failed');
           }}
         />
-        {/* <button className="btn-lgw">
-          <a href="#" className="button btn-fb">
-            <svg>
-              <rect x="0" y="0" fill="none" width="100%" height="100%" />
-            </svg>
-            <i className="fab fa-facebook-f"></i> Facebook
-          </a>
-        </button>
-
-        <button className="btn-lgw">
-          <a href="#" className="button btn-gg">
-            <svg>
-              <rect x="0" y="0" fill="none" width="100%" height="100%" />
-            </svg>
-            <i className="fab fa-google "></i>
-            <span className="g">G</span>
-            <span className="o1">o</span>
-            <span className="o2">o</span>
-            <span className="g">g</span>
-            <span className="l">l</span>
-            <span className="e">e</span>
-          </a>
-        </button>
-
-        <button className="btn-lgw">
-          <a href="#" className="button btn-ap">
-            <svg>
-              <rect x="0" y="0" fill="none" width="100%" height="100%" />
-            </svg>
-            <i className="fab fa-apple"></i> Apple
-          </a>
-        </button> */}
+    
       </div>
     </div>
   );

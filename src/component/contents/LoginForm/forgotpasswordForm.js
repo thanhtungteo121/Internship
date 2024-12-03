@@ -87,7 +87,7 @@ const ForgotPasswordForm = ({ onBackToLoginClick, onClick, onChangeImage }) => {
                 onBlur={() => setForgotEmailFocused(false)}
                 onChange={(e) => setForgotEmailValue(e.target.value)}
               />
-               {errors.forgotEmailValue && <span className="error" style={{ color: "red", fontSize: "12px" }}>{errors.forgotEmailValue}</span>}
+              {errors.email && <small className="error-message-l">{errors.email}</small>} 
             </div>
             <div>
               <button className="login-btn" type="submit">

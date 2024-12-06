@@ -27,34 +27,32 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
+
 const authUserMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization; // Dùng chuẩn 'Authorization' header
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      message: "Authentication token is missing or invalid",
-      status: "error",
-    });
-  }
 
-  const token = authHeader.split(" ")[1];
+  const token = req.headers.token?.split(" ")[1];
+  console.log("token", token);
   const userId = req.params.id;
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => { // Dùng biến môi trường
+  console.log("userId", userId);
+  jwt.verify(token, "access_token", function (err, user) {
+    console.log("user", user);
     if (err) {
-      return res.status(403).json({
-        message: "Invalid or expired token",
+      return res.status(404).json({
+        err: err,
+        message: "the authemtication",
         status: "error",
       });
     }
 
-    if (user.payload?.isAdmin || user.payload?.id === userId) {
-      return next();
+    if (user.isAdmin || user.user_id == userId) {
+      next();
+    } 
+    else {
+      return res.status(404).json({
+        message: "the authemtication",
+        status: "error",
+      });
     }
-
-    return res.status(403).json({
-      message: "You do not have permission to perform this action",
-      status: "error",
-    });
   });
 };
 

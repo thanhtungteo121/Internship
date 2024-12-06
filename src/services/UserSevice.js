@@ -8,6 +8,7 @@ const client = new OAuth2Client(clientID)
 const nodemailer = require("nodemailer"); // Dùng để gửi email reset mật khẩu
 const { Op } = require("sequelize");
 
+require('dotenv').config(); 
 
 const findUserTitle = async (title, id) => {
   return await User.findOne({
@@ -33,8 +34,8 @@ const verifyToken= async(token)=>{
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "", // Email của bạn
-      pass: "mật khẩu email lấy tron email", // Mật khẩu email
+      user:`${process.env.EMAIL_USER}`, // Email của bạn
+      pass: `${process.env.EMAIL_PASS}`, // Mật khẩu email
     },
   });
 

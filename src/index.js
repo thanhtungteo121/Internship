@@ -33,6 +33,7 @@ app.use(session({
   cookie: {
     secure: false, // Đặt thành true nếu sử dụng HTTPS
     httpOnly: false,
+     sameSite: 'none', // Cho phép Cross-Origin cookies
     maxAge: 24 * 60 * 60 * 1000, // Cookie tồn tại trong 1 ngày
   }
 }));

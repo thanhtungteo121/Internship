@@ -12,7 +12,7 @@ const googleAuth = async (req, res) => {
     // Tạo refresh_token và gửi về client
     const {refresh_token, ...data} = resp
     res.cookie("refresh_token", refresh_token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: true, 
       sameSite: 'Strict',
     });

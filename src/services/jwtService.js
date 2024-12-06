@@ -36,7 +36,7 @@ const refreshTokenJWTService = (token) => {
         }
          //khi lays được user từ refresh token và tạo access token mới cho user đó
         const access_token = await genneralAccessToken({
-        id: user.id,
+        user_id: user.user_id,
         isAdmin: user?.isAdmin
         });
         resolve({

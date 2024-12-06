@@ -13,7 +13,7 @@ require('dotenv').config();
 
 const port = process.env.PORT || '';
 app.use(cors({
-  origin: 'http://localhost:3000',
+ origin: ['http://localhost:3000', 'https://backend-daily-m7gs-v2.onrender.com'],
   credentials: true
 }));
 

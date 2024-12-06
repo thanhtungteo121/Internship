@@ -12,7 +12,10 @@ const path = require("path");
 require('dotenv').config(); 
 
 const port = process.env.PORT || '';
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 const db_host = process.env.DB_HOST ; // Sử dụng trực tiếp process.env mà không cần `${}`
 console.log("db_host:", db_host);

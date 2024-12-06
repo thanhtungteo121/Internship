@@ -10,9 +10,7 @@ const googleAuth = async (req, res) => {
     }
     const resp = await UserSevice.googleAuth(token);
     // Tạo refresh_token và gửi về client
-    
     const {refresh_token, ...data} = resp
-    console.log("refresh_token", refresh_token);
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       secure: false, 
@@ -62,8 +60,10 @@ const createUser = async (req, res) => {
 const logginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("req.body", req.body);
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isCheckEmail = re.test(email);
+    
     if (!email || !password) {
       return res.status(400).json({
         status: "Error",
@@ -84,6 +84,8 @@ const logginUser = async (req, res) => {
     }
 
     const { refresh_token, ...newResponse } = resp;
+    console.log("refresh_token", refresh_token);
+
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       secure: false, // Đặt thành true nếu sử dụng HTTPS
@@ -185,7 +187,7 @@ const getAllUser = async (req, res) => {
 
 const getDetailUser = async (req, res) => {
   try {
-    const userId = req.params._id;
+    const userId = req.params.id;
     const resp = await UserSevice.getDetailUser(userId);
     return res.status(200).json(resp);
   } catch (e) {
@@ -199,6 +201,7 @@ const getDetailUser = async (req, res) => {
 const refreshToken = async (req, res) => {
   try {
     const token = req.cookies.refresh_token
+    console.log("token refresg cookies",token)
     if (!token) {
       return res.status(200).json({
         status: "Error",
@@ -238,7 +241,9 @@ const requestPasswordReset = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const token = req.params.token;
+    
     const { newPassword, confirmPassword } = req.body.data;
+
     if (!token || !newPassword || !confirmPassword) {
       return res.status(400).json({
         status: "Error",

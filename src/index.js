@@ -25,17 +25,6 @@ app.get("/", (req, res) => {
   return res.send("Success connect with Port");
 });
 
-// Cấu hình session
-app.use(session({
-  secret:'yourSecretKey', // Sử dụng giá trị từ .env nếu có
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: true, // Đặt thành true nếu sử dụng HTTPS
-    httpOnly: false, //
-    maxAge: 24 * 60 * 60 * 1000, // Cookie tồn tại trong 1 ngày
-  }
-}));
 
 // Kết nối MySQL
 const connectToDatabase = async () => {

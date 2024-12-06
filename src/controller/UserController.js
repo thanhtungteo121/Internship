@@ -87,7 +87,7 @@ const logginUser = async (req, res) => {
     console.log("refresh_token", refresh_token);
 
     res.cookie("refresh_token", refresh_token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true, // Đặt thành true nếu sử dụng HTTPS
       sameSite: 'Strict',
     });

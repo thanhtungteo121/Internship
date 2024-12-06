@@ -12,7 +12,7 @@ const googleAuth = async (req, res) => {
     // Tạo refresh_token và gửi về client
     const {refresh_token, ...data} = resp
     res.cookie("refresh_token", refresh_token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: false, 
       sameSite: 'Strict',
     });
@@ -87,7 +87,7 @@ const logginUser = async (req, res) => {
     console.log("refresh_token", refresh_token);
 
     res.cookie("refresh_token", refresh_token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: false, // Đặt thành true nếu sử dụng HTTPS
       sameSite: 'Strict',
     });

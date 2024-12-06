@@ -7,7 +7,7 @@ const { authMiddleware, authUserMiddleware, verifyEmail, sendVerificationCode } 
 // Route to send verification email
 router.post("/send-verification", sendVerificationCode);
 
-router.post('/sign-up',verifyEmail ,userController.createUser)
+router.post('/sign-up', verifyEmail ,userController.createUser)
 
 router.post('/auth/google', userController.googleAuth);
 
@@ -24,9 +24,9 @@ router.post('/delete-many-user',authMiddleware,userController.deleteManyUser)
 
 router.get('/get-all-user',authMiddleware,userController.getAllUser)
 
-router.get('/get-detail-user/:_id' ,authUserMiddleware,userController.getDetailUser)
+router.get('/get-detail-user/:id' ,authUserMiddleware,userController.getDetailUser)
 
-router.post('/refresh-token',authUserMiddleware,userController.refreshToken)
+router.post('/refresh-token',userController.refreshToken)
 
 // Yêu cầu gửi email reset mật khẩu
 router.post('/request-password-reset', userController.requestPasswordReset);

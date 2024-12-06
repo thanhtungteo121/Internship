@@ -1,5 +1,7 @@
 const { Sequelize } = require('sequelize');
 
+require('dotenv').config(); 
+
 // Tạo kết nối đến cơ sở dữ liệu
 const sequelize = new Sequelize(
   process.env.DB_NAME || '', // Tên database

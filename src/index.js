@@ -4,7 +4,6 @@ const cors = require('cors');
 const routes = require('./routes');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const passport = require('passport');
 const app = express();
 const session = require('express-session');
 const path = require("path");
@@ -12,9 +11,7 @@ const path = require("path");
 // Đảm bảo dotenv được cấu hình chính xác
 require('dotenv').config(); 
 
-const port = process.env.PORT || 5001;
-require('./middleware/passportSetUp'); // Import passport setup
-
+const port = process.env.PORT || '';
 app.use(cors());
 
 const db_host = process.env.DB_HOST ; // Sử dụng trực tiếp process.env mà không cần `${}`
@@ -57,10 +54,6 @@ const connectToDatabase = async () => {
 // Sử dụng middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
-
-// Khởi tạo Passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Định tuyến
 routes(app);

@@ -201,7 +201,9 @@ const getDetailUser = async (req, res) => {
 const refreshToken = async (req, res) => {
   try {
     const token = req.cookies.refresh_token
-    console.log("token refresg cookies",token)
+    console.log("token refresg cookies",req.cookies)
+    console.log("token refresg cookies 1111",token)
+    
     if (!token) {
       return res.status(200).json({
         status: "Error",

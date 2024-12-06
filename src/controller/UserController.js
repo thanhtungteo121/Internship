@@ -10,7 +10,9 @@ const googleAuth = async (req, res) => {
     }
     const resp = await UserSevice.googleAuth(token);
     // Tạo refresh_token và gửi về client
+    
     const {refresh_token, ...data} = resp
+    console.log("refresh_token", refresh_token);
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       secure: false, 

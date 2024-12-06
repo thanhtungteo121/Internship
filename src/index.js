@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 
 // Cấu hình session
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'yourSecretKey', // Sử dụng giá trị từ .env nếu có
+  secret:'yourSecretKey', // Sử dụng giá trị từ .env nếu có
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -41,10 +41,10 @@ app.use(session({
 const connectToDatabase = async () => {
   try {
     const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || '',
-      user: process.env.DB_USER || '',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || '',
+      host: 'localhost',
+      user: 'root',
+      password:  '',
+      database:  'dailydictation',
     });
     console.log('Connected to MySQL database successfully!');
     return connection;

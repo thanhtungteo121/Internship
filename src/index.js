@@ -1,5 +1,4 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const mysql = require('mysql2/promise'); // Sử dụng mysql2 với promise
 const cors = require('cors');
 const routes = require('./routes');
@@ -7,36 +6,28 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require('passport');
 const app = express();
-const path = require("path");
 const session = require('express-session');
+const path = require("path");
+
+// Đảm bảo dotenv được cấu hình chính xác
+require('dotenv').config(); 
+
 const port = process.env.PORT || 5001;
 require('./middleware/passportSetUp'); // Import passport setup
 
-// Set view engine là EJS
-app.set('view engine', 'ejs');
+app.use(cors());
 
-// Cấu hình đường dẫn đến thư mục views (trong thư mục src)
-app.set('views', path.join(__dirname, './views'));
+const db_host = process.env.DB_HOST ; // Sử dụng trực tiếp process.env mà không cần `${}`
+console.log("db_host:", db_host);
 
-// Route để render trang social.ejs
-app.get('/social', (req, res) => {
-  res.render('social', { tokenGG: 'some_token_value' });
-});
-
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
-
-dotenv.config();
-
-//nhận api mặc định khi kết nối server
+// Nhận API mặc định khi kết nối server
 app.get("/", (req, res) => {
   return res.send("Success connect with Port");
 });
 
+// Cấu hình session
 app.use(session({
-  secret: 'yourSecretKey', // Bạn nên sử dụng một chuỗi bí mật bảo mật hơn
+  secret: process.env.SESSION_SECRET || 'yourSecretKey', // Sử dụng giá trị từ .env nếu có
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -46,16 +37,16 @@ app.use(session({
   }
 }));
 
-
 // Kết nối MySQL
 const connectToDatabase = async () => {
   try {
     const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
+      host: process.env.DB_HOST || '',
+      user: process.env.DB_USER || '',
       password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'dailydictation',
+      database: process.env.DB_NAME || '',
     });
+    console.log('Connected to MySQL database successfully!');
     return connection;
   } catch (err) {
     console.error('Failed to connect to MySQL:', err);
@@ -70,8 +61,11 @@ app.use(cookieParser());
 // Khởi tạo Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Định tuyến
 routes(app);
 
+// Khởi chạy server
 app.listen(port, async () => {
   await connectToDatabase(); // Kết nối đến cơ sở dữ liệu khi khởi chạy server
   console.log("Server is running on port", port);

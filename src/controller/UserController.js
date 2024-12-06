@@ -89,7 +89,8 @@ const logginUser = async (req, res) => {
     res.cookie("refresh_token", refresh_token, {
       httpOnly: false,
       secure: true, // Đặt thành true nếu sử dụng HTTPS
-      sameSite: 'Strict',
+      sameSite: 'None', // Hoạt động trong Cross-Origin
+      maxAge: 7 * 24 * 60 * 60 * 1000, // Tồn tại trong 7 ngày
     });
 
     return res.status(200).json(newResponse);

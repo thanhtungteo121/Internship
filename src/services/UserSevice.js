@@ -149,14 +149,15 @@ const logginUser = (userLogin) => {
       }
       //sau khi kieermt ra pasword tành công
       const access_token = await genneralAccessToken({
-        id: checkUser.user_id,
+        user_id: checkUser.user_id,
         isAdmin: checkUser.isAdmin,
       });
 
       const refresh_token = await genneralRefreshToken({
-        id: checkUser.user_id,
+        user_id: checkUser.user_id,
         isAdmin: checkUser.isAdmin,
       });
+
       resolve({
         status: "Ok",
         message: "SUCCESS",

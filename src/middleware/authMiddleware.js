@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer"); // Dùng để gửi email reset mật khẩu
 const User = require("../model/UserModel");
+require('dotenv').config(); 
 
-
-
+// này được dùng cho các user isAdmin là true
 const authMiddleware = (req, res, next) => {
   const token = req.headers.token?.split(" ")[1];
   jwt.verify(token,"access_token", function (err, user) {
@@ -28,28 +28,35 @@ const authMiddleware = (req, res, next) => {
 };
 
 const authUserMiddleware = (req, res, next) => {
-  const token = req.headers.token?.split(" ")[1];
+  const authHeader = req.headers.authorization; // Dùng chuẩn 'Authorization' header
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      message: "Authentication token is missing or invalid",
+      status: "error",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
   const userId = req.params.id;
-  
-  jwt.verify(token, "access_token", function (err, user) {
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => { // Dùng biến môi trường
     if (err) {
-      return res.status(404).json({
-        err: err,
-        message: "the authemtication",
+      return res.status(403).json({
+        message: "Invalid or expired token",
         status: "error",
       });
     }
+
     if (user.payload?.isAdmin || user.payload?.id === userId) {
-      next();
-    } else {
-      return res.status(404).json({
-        message: "the authemtication",
-        status: "error",
-      });
+      return next();
     }
+
+    return res.status(403).json({
+      message: "You do not have permission to perform this action",
+      status: "error",
+    });
   });
 };
-
 
 
 // Temporary storage for verification codes
@@ -75,39 +82,39 @@ const sendVerificationEmail = async (email, verificationCode) => {
 };
 
 const sendVerificationCode = async (req, res) => {
-  const { email } = req.body.data;
-  
-  const checkEmail = await User.findOne({
-    where: { email: email },
-    attributes: ["user_id","name", "email", "password", "authType", "authGoogleID", "isAdmin", "totalDay", "activeDay","inactiveDay","resetPasswordToken","resetPasswordExpires"], 
-  })
-  
-  if (!email) {
-    return res.status(400).json({
-      status: "Error",
-      message: "Email is required",
-    });
-  }
-
-  if (checkEmail) {
-    return res.status(404).json({
-      status: "Error",
-      message: "Email already exists",
-    });
-  }
-
-  // Generate a 6-digit verification code
-  const verificationCode = crypto.randomInt(100000, 999999).toString();
-
-  // Set expiration time (current time + 30 minutes)
-  const expiresAt =  Date.now() + 300000; // 30 minutes from now
-
-  // Store the code with expiration
-  verificationCodes.set(email, { code: verificationCode, expiresAt });
-  setTimeout(() => verificationCodes.delete(email), 30 * 60 * 1000); // Auto-delete after 30 minutes
-
-  // Send the verification email
   try {
+    const { email } = req.body.data;
+  
+    const checkEmail = await User.findOne({
+      where: { email: email },
+      attributes: ["user_id","name", "email", "password", "authType", "authGoogleID", "isAdmin", "totalDay", "activeDay","inactiveDay","resetPasswordToken","resetPasswordExpires"], 
+    })
+    
+    if (!email) {
+      return res.status(400).json({
+        status: "Error",
+        message: "Email is required",
+      });
+    }
+  
+    if (checkEmail) {
+      return res.status(404).json({
+        status: "Error",
+        message: "Email already exists",
+      });
+    }
+  
+    // Generate a 6-digit verification code
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
+  
+    // Set expiration time (current time + 30 minutes)
+    const expiresAt =  Date.now() + 300000; // 30 minutes from now
+  
+    // Store the code with expiration
+    verificationCodes.set(email, { code: verificationCode, expiresAt });
+    setTimeout(() => verificationCodes.delete(email), 30 * 60 * 1000); // Auto-delete after 30 minutes
+  
+    // Send the verification email
     await sendVerificationEmail(email, verificationCode);
     res.status(200).json({
       status: "Ok",
@@ -123,6 +130,7 @@ const sendVerificationCode = async (req, res) => {
 
 // Helper function to send the verification email
 const verifyEmail = async (req, res, next) => {
+try{
   const { email, verificationCode} = req.body;
   console.log("req.body", req.body);
   if (!email || !verificationCode) {
@@ -131,7 +139,6 @@ const verifyEmail = async (req, res, next) => {
       message: "Email and verification code are required",
     });
   }
-
   const storedData = verificationCodes.get(email);
 
   if (!storedData) {
@@ -163,6 +170,12 @@ const verifyEmail = async (req, res, next) => {
   // If valid, proceed to the next middleware
   verificationCodes.delete(email); // Optionally delete the code after successful verification
   next();
+}catch(e){
+  res.status(500).json({
+    status: "Error",
+    message: "Failed to verify email",
+  });
+}
 };
 module.exports = {
   authMiddleware,authUserMiddleware,verifyEmail,sendVerificationCode
